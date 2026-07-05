@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5" />
+  <title>Bee Hive · Link Hub</title>
+  <!-- Font Awesome 6 (free) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    /* ----- CSS Variables (flat, clean) ----- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #F8FAFC;
+      --card-bg: #FFFFFF;
+      --primary: #2563EB;
+      --success: #22C55E;
+      --accent: #F59E0B;
+      --danger: #EF4444;
+      --text-dark: #0F172A;
+      --text-muted: #475569;
+      --border: #E2E8F0;
+      --radius: 16px;
+      --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.02), 0 2px 4px rgba(0, 0, 0, 0.02);
+      --shadow-md: 0 12px 28px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.02);
+      --shadow-hover: 0 24px 48px rgba(0, 0, 0, 0.06), 0 8px 20px rgba(0, 0, 0, 0.03);
+      --transition: 0.2s cubic-bezier(0.2, 0, 0, 1);
+      --font: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      font-family: var(--font);
+      color: var(--text-dark);
+      padding: 1.5rem 1rem 4rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(8px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .container {
+      max-width: 1320px;
+      width: 100%;
+    }
+
+    /* ----- header / branding ----- */
+    .header {
+      margin-bottom: 2.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.2rem 0.8rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-icon {
+      font-size: 2.6rem;
+      color: var(--primary);
+      background: rgba(37, 99, 235, 0.07);
+      padding: 0.4rem 0.4rem 0.2rem 0.4rem;
+      border-radius: 18px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 3.4rem;
+      height: 3.4rem;
+      transition: background 0.2s;
+    }
+
+    .brand-icon i {
+      font-size: 2.2rem;
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-title {
+      font-size: 1.8rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      color: var(--text-dark);
+    }
+
+    .brand-sub {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      font-weight: 400;
+      letter-spacing: 0.01em;
+      margin-top: 0.05rem;
+    }
+
+    .search-wrapper {
+      flex: 1 1 260px;
+      min-width: 180px;
+      position: relative;
+    }
+
+    .search-wrapper i {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 1rem;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+
+    #searchInput {
+      width: 100%;
+      padding: 0.8rem 1rem 0.8rem 2.8rem;
+      border: 1px solid var(--border);
+      border-radius: 40px;
+      background: var(--card-bg);
+      font-size: 0.95rem;
+      color: var(--text-dark);
+      transition: border 0.2s, box-shadow 0.2s, background 0.2s;
+      box-shadow: var(--shadow-sm);
+      font-family: inherit;
+      outline: none;
+    }
+
+    #searchInput:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12), var(--shadow-sm);
+      background: white;
+    }
+
+    #searchInput::placeholder {
+      color: var(--text-muted);
+      opacity: 0.6;
+    }
+
+    /* ----- grid / cards ----- */
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      margin-top: 0.5rem;
+    }
+
+    @media (min-width: 640px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    /* card */
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 1.5rem 1.25rem 1.25rem;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.25s ease, box-shadow 0.3s ease, border-color 0.2s;
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      animation: cardFade 0.45s ease both;
+      animation-delay: calc(0.03s * var(--i, 1));
+      will-change: transform;
+    }
+
+    @keyframes cardFade {
+      0% { opacity: 0; transform: scale(0.97) translateY(6px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-hover);
+      border-color: rgba(37, 99, 235, 0.08);
+    }
+
+    .card-icon {
+      width: 3.2rem;
+      height: 3.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 14px;
+      margin-bottom: 0.9rem;
+      transition: transform 0.25s ease, background 0.25s, color 0.2s;
+      background: rgba(37, 99, 235, 0.06);
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+
+    .card-icon svg {
+      width: 1.6rem;
+      height: 1.6rem;
+      stroke-width: 1.8;
+      transition: transform 0.25s ease;
+    }
+
+    .card:hover .card-icon {
+      transform: scale(1.06);
+      background: rgba(37, 99, 235, 0.09);
+    }
+
+    .card:hover .card-icon svg {
+      transform: scale(1.06);
+    }
+
+    /* --- Individual icon colors (subtle, premium) --- */
+    .card-icon.icon-globe { color: #2563EB; background: rgba(37, 99, 235, 0.08); }
+    .card-icon.icon-trash { color: #DC2626; background: rgba(220, 38, 38, 0.08); }
+    .card-icon.icon-images { color: #7C3AED; background: rgba(124, 58, 237, 0.08); }
+    .card-icon.icon-telegram { color: #0EA5E9; background: rgba(14, 165, 233, 0.08); }
+    .card-icon.icon-calendar { color: #D97706; background: rgba(217, 119, 6, 0.08); }
+    .card-icon.icon-shield { color: #DC2626; background: rgba(220, 38, 38, 0.08); }
+    .card-icon.icon-bed { color: #0891B2; background: rgba(8, 145, 178, 0.08); }
+    .card-icon.icon-star { color: #F59E0B; background: rgba(245, 158, 11, 0.08); }
+    .card-icon.icon-google { color: #EA4335; background: rgba(234, 67, 53, 0.08); }
+    .card-icon.icon-envelope { color: #D97706; background: rgba(217, 119, 6, 0.08); }
+    .card-icon.icon-phone { color: #059669; background: rgba(5, 150, 105, 0.08); }
+
+    .card:hover .card-icon.icon-globe { background: rgba(37, 99, 235, 0.12); }
+    .card:hover .card-icon.icon-trash { background: rgba(220, 38, 38, 0.12); }
+    .card:hover .card-icon.icon-images { background: rgba(124, 58, 237, 0.12); }
+    .card:hover .card-icon.icon-telegram { background: rgba(14, 165, 233, 0.12); }
+    .card:hover .card-icon.icon-calendar { background: rgba(217, 119, 6, 0.12); }
+    .card:hover .card-icon.icon-shield { background: rgba(220, 38, 38, 0.12); }
+    .card:hover .card-icon.icon-bed { background: rgba(8, 145, 178, 0.12); }
+    .card:hover .card-icon.icon-star { background: rgba(245, 158, 11, 0.12); }
+    .card:hover .card-icon.icon-google { background: rgba(234, 67, 53, 0.12); }
+    .card:hover .card-icon.icon-envelope { background: rgba(217, 119, 6, 0.12); }
+    .card:hover .card-icon.icon-phone { background: rgba(5, 150, 105, 0.12); }
+
+    .card-title {
+      font-weight: 600;
+      font-size: 1.1rem;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.2rem;
+      color: var(--text-dark);
+    }
+
+    .card-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      line-height: 1.4;
+      flex: 1;
+    }
+
+    .card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.6rem 0.4rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .badge {
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      padding: 0.25rem 0.75rem;
+      border-radius: 40px;
+      background: var(--border);
+      color: var(--text-dark);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      text-transform: capitalize;
+      background: #eef2f6;
+      transition: background 0.2s;
+    }
+
+    .badge i {
+      font-size: 0.6rem;
+      opacity: 0.7;
+    }
+
+    .badge-blue { background: #DBEAFE; color: #1E40AF; }
+    .badge-sky { background: #E0F2FE; color: #0369A1; }
+    .badge-green { background: #DCFCE7; color: #166534; }
+    .badge-orange { background: #FEF3C7; color: #B45309; }
+    .badge-red { background: #FEE2E2; color: #B91C1C; }
+    .badge-purple { background: #EDE9FE; color: #5B21B6; }
+    .badge-yellow { background: #FEF9C3; color: #854D0E; }
+    .badge-gold { background: #FDE68A; color: #78350F; }
+    .badge-gray { background: #F1F5F9; color: #334155; }
+
+    .card-actions {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      margin-top: 0.2rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      padding: 0.45rem 1.1rem;
+      border-radius: 40px;
+      font-weight: 500;
+      font-size: 0.8rem;
+      font-family: inherit;
+      border: 1px solid transparent;
+      background: var(--bg);
+      color: var(--text-dark);
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s, box-shadow 0.2s, border-color 0.2s;
+      box-shadow: var(--shadow-sm);
+      text-decoration: none;
+      line-height: 1.2;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .btn-primary:hover {
+      background: #1D4ED8;
+      border-color: #1D4ED8;
+      box-shadow: 0 6px 14px rgba(37, 99, 235, 0.2);
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border-color: var(--border);
+      color: var(--text-muted);
+    }
+
+    .btn-outline:hover {
+      background: var(--bg);
+      border-color: #cbd5e1;
+      color: var(--text-dark);
+      transform: translateY(-1px);
+    }
+
+    .btn:active {
+      transform: scale(0.96);
+    }
+
+    /* ripple (simple) */
+    .ripple {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ripple-effect {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      transform: scale(0);
+      animation: rippleAnim 0.5s linear;
+      pointer-events: none;
+      width: 60px;
+      height: 60px;
+      margin-left: -30px;
+      margin-top: -30px;
+    }
+
+    .btn-outline .ripple-effect {
+      background: rgba(0,0,0,0.06);
+    }
+
+    @keyframes rippleAnim {
+      to { transform: scale(4); opacity: 0; }
+    }
+
+    /* toast */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--text-dark);
+      color: white;
+      padding: 0.7rem 1.8rem;
+      border-radius: 40px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.18);
+      opacity: 0;
+      transition: opacity 0.25s, transform 0.3s cubic-bezier(0.2, 0, 0, 1);
+      pointer-events: none;
+      z-index: 999;
+      backdrop-filter: blur(2px);
+      background: rgba(15, 23, 42, 0.92);
+      letter-spacing: 0.01em;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* footer */
+    .footer {
+      margin-top: 3.5rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      border-top: 1px solid var(--border);
+      padding-top: 2rem;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .footer strong {
+      color: var(--text-dark);
+      font-weight: 600;
+    }
+
+    /* helpers */
+    .hidden-card {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- header -->
+    <header class="header">
+      <div class="brand">
+        <span class="brand-icon"><i class="fas fa-hexagon"></i></span>
+        <div class="brand-text">
+          <span class="brand-title">Bee Hive</span>
+          <span class="brand-sub">Useful Links &amp; Resources</span>
+        </div>
+      </div>
+      <div class="search-wrapper">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchInput" placeholder="Search links..." aria-label="Filter links" />
+      </div>
+    </header>
+
+    <!-- grid -->
+    <div class="grid" id="cardGrid"></div>
+
+    <!-- footer -->
+    <footer class="footer">
+      <strong>Bee Hive Resources</strong>
+      <span>All important links in one place.</span>
+    </footer>
+  </div>
+
+  <!-- toast -->
+  <div id="toast" class="toast">Copied!</div>
+
+  <script>
+    (function() {
+      // ----- SVG icon definitions (real icons) -----
+      const icons = {
+        globe: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.6 9h16.8M3.6 15h16.8M9 3.6a18.6 18.6 0 0 0 0 16.8M15 3.6a18.6 18.6 0 0 1 0 16.8" />
+        </svg>`,
+        trash: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0 1 16.138 21H7.862a2 2 0 0 1-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v3M4 7h16" />
+        </svg>`,
+        images: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 0 1 2.828 0L16 16m-2-2l1.586-1.586a2 2 0 0 1 2.828 0L20 14m-6-6h.01M6 20h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z" />
+        </svg>`,
+        telegram: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9a9 9 0 0 1-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9" />
+        </svg>`,
+        calendar: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z" />
+        </svg>`,
+        shield: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2zm10-10V7a4 4 0 0 0-8 0v4h8z" />
+        </svg>`,
+        bed: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 12h18M3 6h18M3 18h18M3 6v12M21 6v12" />
+        </svg>`,
+        star: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 0 0 .95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 0 0-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 0 0-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 0 0-.363-1.118L2.979 8.257c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 0 0 .951-.69l1.519-4.674z" />
+        </svg>`,
+        google: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9a9 9 0 0 1-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9" />
+        </svg>`,
+        envelope: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 0 0 2.22 0L21 8M5 19h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2z" />
+        </svg>`,
+        phone: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 0 1 2-2h3.28a1 1 0 0 1 .948.684l1.498 4.493a1 1 0 0 1-.502 1.21l-2.257 1.13a11.042 11.042 0 0 0 5.516 5.516l1.13-2.257a1 1 0 0 1 1.21-.502l4.493 1.498a1 1 0 0 1 .684.949V19a2 2 0 0 1-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+        </svg>`
+      };
+
+      // ----- data (APK removed) -----
+      const links = [
+        { title: 'Wayanad Bee Hive', desc: 'Main website', iconKey: 'globe', iconClass: 'icon-globe', url: 'https://wayanadbeehive.com/', category: 'Website', badge: 'blue' },
+        { title: 'Image Delete', desc: 'Delete images', iconKey: 'trash', iconClass: 'icon-trash', url: 'https://imagedelete.wayanadbeehive.com/', category: 'Website', badge: 'blue' },
+        { title: 'Gallery', desc: 'Photo gallery', iconKey: 'images', iconClass: 'icon-images', url: 'https://gallery.wayanadbeehive.com/', category: 'Gallery', badge: 'purple' },
+        { title: 'Telegram Bot', desc: '@beehiveimagebot', iconKey: 'telegram', iconClass: 'icon-telegram', url: 'https://t.me/beehiveimagebot', category: 'Telegram', badge: 'sky' },
+        { title: 'Monsoon Booking', desc: 'Seasonal booking', iconKey: 'calendar', iconClass: 'icon-calendar', url: 'https://monsoonbooking.wayanadbeehive.com', category: 'Booking', badge: 'yellow' },
+        { title: 'Booking Admin', desc: 'Admin panel', iconKey: 'shield', iconClass: 'icon-shield', url: 'https://bookingadmin.wayanadbeehive.com/', category: 'Admin', badge: 'red' },
+        { title: 'Rooms', desc: 'Room management', iconKey: 'bed', iconClass: 'icon-bed', url: 'https://rooms.wayanadbeehive.com/', category: 'Website', badge: 'blue' },
+        { title: 'Review', desc: 'Customer reviews', iconKey: 'star', iconClass: 'icon-star', url: 'https://review.wayanadbeehive.com/', category: 'Review', badge: 'gold' },
+        { title: 'Admin Review', desc: 'Review admin', iconKey: 'shield', iconClass: 'icon-shield', url: 'https://adminreview.wayanadbeehive.com/', category: 'Admin', badge: 'red' },
+        { title: 'Google Share', desc: 'Shared album', iconKey: 'google', iconClass: 'icon-google', url: 'https://share.google/ROkIEuTXaeFOlCcO0', category: 'Google', badge: 'orange' },
+        { title: 'Email', desc: 'wayanadbeehive@gmail.com', iconKey: 'envelope', iconClass: 'icon-envelope', url: 'mailto:wayanadbeehive@gmail.com', category: 'Email', badge: 'orange' },
+        { title: 'Phone 1', desc: '9447341111', iconKey: 'phone', iconClass: 'icon-phone', url: 'tel:+919447341111', category: 'Phone', badge: 'green' },
+        { title: 'Phone 2', desc: '9656391777', iconKey: 'phone', iconClass: 'icon-phone', url: 'tel:+919656391777', category: 'Phone', badge: 'green' },
+        { title: 'Phone 3', desc: '9656359111', iconKey: 'phone', iconClass: 'icon-phone', url: 'tel:+919656359111', category: 'Phone', badge: 'green' },
+        { title: 'Phone 4', desc: '8606754055', iconKey: 'phone', iconClass: 'icon-phone', url: 'tel:+918606754055', category: 'Phone', badge: 'green' },
+      ];
+
+      const grid = document.getElementById('cardGrid');
+      const searchInput = document.getElementById('searchInput');
+      const toastEl = document.getElementById('toast');
+      let toastTimer = null;
+
+      // build cards
+      function renderCards(filter = '') {
+        const q = filter.trim().toLowerCase();
+        let html = '';
+        let visibleCount = 0;
+
+        links.forEach((item, index) => {
+          const match = q === '' || 
+            item.title.toLowerCase().includes(q) || 
+            item.desc.toLowerCase().includes(q) || 
+            item.category.toLowerCase().includes(q) ||
+            item.url.toLowerCase().includes(q);
+
+          if (!match) {
+            html += `<div class="card hidden-card" data-index="${index}" style="--i:${index+1};"></div>`;
+            return;
+          }
+          visibleCount++;
+
+          // badge class
+          let badgeClass = 'badge';
+          if (item.badge) badgeClass += ` badge-${item.badge}`;
+
+          // icon
+          const iconSvg = icons[item.iconKey] || icons.globe;
+          const iconWrapperClass = `card-icon ${item.iconClass || ''}`;
+
+          // category icon
+          let catIcon = 'fa-tag';
+          if (item.category === 'Website') catIcon = 'fa-globe';
+          else if (item.category === 'Telegram') catIcon = 'fa-telegram';
+          else if (item.category === 'Email') catIcon = 'fa-envelope';
+          else if (item.category === 'Phone') catIcon = 'fa-phone';
+          else if (item.category === 'Gallery') catIcon = 'fa-images';
+          else if (item.category === 'Admin') catIcon = 'fa-user-shield';
+          else if (item.category === 'Review') catIcon = 'fa-star';
+          else if (item.category === 'Booking') catIcon = 'fa-calendar-check';
+          else if (item.category === 'Google') catIcon = 'fa-google';
+
+          html += `
+            <div class="card" data-index="${index}" style="--i:${index+1};">
+              <div class="${iconWrapperClass}">${iconSvg}</div>
+              <div class="card-title">${item.title}</div>
+              <div class="card-desc">${item.desc}</div>
+              <div class="card-meta">
+                <span class="${badgeClass}"><i class="fas ${catIcon}"></i> ${item.category}</span>
+              </div>
+              <div class="card-actions">
+                <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="btn btn-primary ripple" data-ripple>Open</a>
+                <button class="btn btn-outline ripple copy-btn" data-url="${item.url}" data-ripple>Copy Link</button>
+              </div>
+            </div>
+          `;
+        });
+
+        grid.innerHTML = html;
+
+        // attach ripple & copy
+        document.querySelectorAll('.ripple').forEach(el => {
+          el.addEventListener('click', function(e) {
+            const rect = this.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const ripple = document.createElement('span');
+            ripple.className = 'ripple-effect';
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            this.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 500);
+          });
+        });
+
+        // copy buttons
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+          btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const url = this.getAttribute('data-url');
+            if (url) {
+              navigator.clipboard.writeText(url).then(() => {
+                showToast('Copied!');
+              }).catch(() => {
+                const textarea = document.createElement('textarea');
+                textarea.value = url;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showToast('Copied!');
+              });
+            }
+          });
+        });
+      }
+
+      // toast
+      function showToast(msg) {
+        toastEl.textContent = msg || 'Copied!';
+        toastEl.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          toastEl.classList.remove('show');
+        }, 1800);
+      }
+
+      // search debounce
+      let searchTimeout = null;
+      searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+          renderCards(this.value);
+        }, 100);
+      });
+
+      // initial render
+      renderCards('');
+    })();
+  </script>
+</body>
+</html>
